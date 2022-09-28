@@ -18,3 +18,21 @@ PolyesterForwardDiff.threaded_gradient!(f, dx, x, ForwardDiff.Chunk(8));
 PolyesterForwardDiff.threaded_jacobian!(g, dx, x, ForwardDiff.Chunk(8));
 PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8));
 ```
+
+## Citing
+
+If you use this package, please cite:
+
+
+```bib
+@article{mester2022differential,
+  title={Differential methods for assessing sensitivity in biological models},
+  author={Mester, Rachel and Landeros, Alfonso and Rackauckas, Chris and Lange, Kenneth},
+  journal={PLoS computational biology},
+  volume={18},
+  number={6},
+  pages={e1009598},
+  year={2022},
+  publisher={Public Library of Science San Francisco, CA USA}
+}
+```

@@ -11,7 +11,7 @@ ForwardDiff.gradient!(dxref, f, x, ForwardDiff.GradientConfig(f, x, ForwardDiff.
 @test dx == dxref
 
 dx .= NaN;
-batch((length(x), max(1,num_threads()>>1), 2), dx, x) do (dx,x), start, stop
+batch((length(x), max(1,Threads.nthreads()>>1), 2), dx, x) do (dx,x), start, stop
     PolyesterForwardDiff.threaded_gradient!(f, view(dx, start%Int:stop%Int), view(x, start%Int:stop%Int), ForwardDiff.Chunk(8))
 end;
 @test dx ≈ dxref

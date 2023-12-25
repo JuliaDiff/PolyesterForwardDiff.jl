@@ -6,7 +6,6 @@
 [![CI-Nightly](https://github.com/JuliaSIMD/Polyester.jl/actions/workflows/CI-julia-nightly.yml/badge.svg)](https://github.com/JuliaSIMD/Polyester.jl/actions/workflows/CI-julia-nightly.yml)
 [![Coverage](https://codecov.io/gh/JuliaSIMD/Polyester.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaSIMD/Polyester.jl)
 
-
 PolyesterForwardDiff.jl is a parallelized ForwardDiff.jl. That's it. It's super fast. See [this paper for some benchmark results](https://www.biorxiv.org/content/10.1101/2021.11.15.468697v1.abstract).
 
 ## Example calls

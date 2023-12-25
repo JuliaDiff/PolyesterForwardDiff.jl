@@ -11,8 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.5'
+          - '1.6'
           - '1'
+          - '~1.10.0-0'
         os:
           - ubuntu-latest
         threads:
@@ -44,6 +45,7 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           file: lcov.info
+
   docs:
     name: Documentation
     runs-on: ubuntu-latest

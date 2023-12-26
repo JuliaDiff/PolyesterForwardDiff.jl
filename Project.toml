@@ -1,7 +1,7 @@
 name = "PolyesterForwardDiff"
 uuid = "98d1487c-24ca-40b6-b7ab-df2af84e126b"
 authors = ["The Chrises"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"

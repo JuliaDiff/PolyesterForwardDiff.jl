@@ -27,8 +27,13 @@ g(x) = A*x
 PolyesterForwardDiff.threaded_jacobian!(g, dx, x, ForwardDiff.Chunk(8));
 ForwardDiff.jacobian!(dxref, g, x, ForwardDiff.JacobianConfig(g, x, ForwardDiff.Chunk(8), nothing));
 @test dx ≈ dxref
+PolyesterForwardDiff.threaded_jacobian!(g, dx, x, ForwardDiff.Chunk(8),Val{true}());
+@test dx ≈ dxref
 
 PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8));
 ForwardDiff.jacobian!(dxref, g!, yref, x, ForwardDiff.JacobianConfig(g!, yref, x, ForwardDiff.Chunk(8), nothing));
+@test dx ≈ dxref
+@test y ≈ yref
+PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8),Val{true}());
 @test dx ≈ dxref
 @test y ≈ yref

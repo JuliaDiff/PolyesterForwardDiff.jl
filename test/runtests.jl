@@ -40,8 +40,8 @@ PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8),Val{t
 
 
 X = randn(10,80);
-dXref = similar(x);
-dX = similar(x);
+dXref = similar(X);
+dX = similar(X);
 ForwardDiff.gradient!(dXref, f, X, ForwardDiff.GradientConfig(f, x, ForwardDiff.Chunk(8), nothing));
 PolyesterForwardDiff.threaded_gradient!(f, dX, X, ForwardDiff.Chunk(8));
 

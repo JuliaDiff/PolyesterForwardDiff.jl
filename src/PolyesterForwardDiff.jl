@@ -120,7 +120,7 @@ end
 # # #### in-place jac, in-place f ####
 
 function evaluate_f_and_jacobian_chunks!(f!::F, (y,Δx,x), start, stop, ::ForwardDiff.Chunk{C}, check::Val{B}) where {F,C,B}
-    Tag = tag(check, f, x)
+    Tag = tag(check, f!, x)
     TagType = typeof(Tag)
     cfg = ForwardDiff.JacobianConfig(f!, y, x, ForwardDiff.Chunk{C}(), Tag)
 

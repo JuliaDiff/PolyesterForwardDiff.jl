@@ -17,6 +17,7 @@ It's pretty much the same as ForwardDiff.jl except it is threaded. The API is th
 PolyesterForwardDiff.threaded_gradient!(f, dx, x, ForwardDiff.Chunk(8));
 PolyesterForwardDiff.threaded_jacobian!(g, dx, x, ForwardDiff.Chunk(8));
 PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8));
+PolyesterForwardDiff.threaded_gradient!(f, dx, x, ForwardDiff.Chunk(8),Val{true}()); #To enable tag checking
 ```
 
 ## Citing

@@ -37,3 +37,12 @@ ForwardDiff.jacobian!(dxref, g!, yref, x, ForwardDiff.JacobianConfig(g!, yref, x
 PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8),Val{true}());
 @test dx ≈ dxref
 @test y ≈ yref
+
+
+X = randn(10,80);
+dXref = similar(x);
+dX = similar(x);
+ForwardDiff.gradient!(dXref, f, X, ForwardDiff.GradientConfig(f, x, ForwardDiff.Chunk(8), nothing));
+PolyesterForwardDiff.threaded_gradient!(f, dX, X, ForwardDiff.Chunk(8));
+
+@test dX ≈ dXref

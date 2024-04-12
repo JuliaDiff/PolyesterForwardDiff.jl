@@ -49,7 +49,7 @@ function evaluate_chunks!(f::F, (r,Δx,x), start, stop, ::ForwardDiff.Chunk{C}, 
     end
 end
 
-function threaded_gradient!(f::F, Δx::AbstractVector, x::AbstractVector, ::ForwardDiff.Chunk{C}, check = Val{false}()) where {F,C}
+function threaded_gradient!(f::F, Δx::AbstractArray, x::AbstractArray, ::ForwardDiff.Chunk{C}, check = Val{false}()) where {F,C}
     N = length(x)
     d = cld_fast(N, C)
     r = Ref{eltype(Δx)}()

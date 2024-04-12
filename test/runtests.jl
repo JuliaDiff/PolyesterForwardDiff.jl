@@ -32,6 +32,8 @@ PolyesterForwardDiff.threaded_jacobian!(g, dx, x, ForwardDiff.Chunk(8),Val{true}
 
 PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8));
 ForwardDiff.jacobian!(dxref, g!, yref, x, ForwardDiff.JacobianConfig(g!, yref, x, ForwardDiff.Chunk(8), nothing));
+@test dx ≈ dxref
+@test y ≈ yref
 PolyesterForwardDiff.threaded_jacobian!(g!, y, dx, x, ForwardDiff.Chunk(8),Val{true}());
 @test dx ≈ dxref
 @test y ≈ yref

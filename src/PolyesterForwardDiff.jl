@@ -5,6 +5,15 @@ import ForwardDiff
 
 const DiffResult = ForwardDiff.DiffResults.DiffResult
 
+# ForwardDiff 1.4.4 split the zero-partials forms of `seed!` out under the name
+# `seed_zero_partials!`. On older versions the equivalent forms of `seed!` write through to
+# the end of the array rather than just the chunk, which is redundant but not incorrect.
+if isdefined(ForwardDiff, :seed_zero_partials!)
+    const seed_zero_partials! = ForwardDiff.seed_zero_partials!
+else
+    const seed_zero_partials! = ForwardDiff.seed!
+end
+
 function cld_fast(a::A,b::B) where {A,B}
     T = promote_type(A,B)
     cld_fast(a%T,b%T)
@@ -31,13 +40,13 @@ function evaluate_chunks!(f::F, (r,Δx,x), start, stop, ::ForwardDiff.Chunk{C}, 
 
     xdual = cfg.duals
     seeds = cfg.seeds
-    ForwardDiff.seed!(xdual, x)
+    seed_zero_partials!(xdual, x)
     for c ∈ start:stop
         i = (c-1) * C + 1
         ForwardDiff.seed!(xdual, x, i, seeds)
         ydual = f(xdual)
         ForwardDiff.extract_gradient_chunk!(TagType, Δx, ydual, i, C)
-        ForwardDiff.seed!(xdual, x, i)
+        seed_zero_partials!(xdual, x, i)
     end
     if is_last
         lastchunksize = C + N - last_stop*C
@@ -73,7 +82,7 @@ function evaluate_jacobian_chunks!(f::F, (Δx,x), start, stop, ::ForwardDiff.Chu
 
     # seed work arrays
     xdual = cfg.duals
-    ForwardDiff.seed!(xdual, x)
+    seed_zero_partials!(xdual, x)
     seeds = cfg.seeds
 
     # handle intermediate chunks
@@ -88,7 +97,7 @@ function evaluate_jacobian_chunks!(f::F, (Δx,x), start, stop, ::ForwardDiff.Chu
         # extract part of the Jacobian
         Δx_reshaped = ForwardDiff.reshape_jacobian(Δx, ydual, xdual)
         ForwardDiff.extract_jacobian_chunk!(TagType, Δx_reshaped, ydual, i, C)
-        ForwardDiff.seed!(xdual, x, i)
+        seed_zero_partials!(xdual, x, i)
     end
 
     # handle the last chunk
@@ -132,7 +141,7 @@ function evaluate_f_and_jacobian_chunks!(f!::F, (y,Δx,x), start, stop, ::Forwar
 
     # seed work arrays
     ydual, xdual = cfg.duals
-    ForwardDiff.seed!(xdual, x)
+    seed_zero_partials!(xdual, x)
     seeds = cfg.seeds
     Δx_reshaped = ForwardDiff.reshape_jacobian(Δx, ydual, xdual)
 
@@ -143,11 +152,11 @@ function evaluate_f_and_jacobian_chunks!(f!::F, (y,Δx,x), start, stop, ::Forwar
         ForwardDiff.seed!(xdual, x, i, seeds)
 
         # compute ydual
-        f!(ForwardDiff.seed!(ydual, y), xdual)
+        f!(seed_zero_partials!(ydual, y), xdual)
 
         # extract part of the Jacobian
         ForwardDiff.extract_jacobian_chunk!(TagType, Δx_reshaped, ydual, i, C)
-        ForwardDiff.seed!(xdual, x, i)
+        seed_zero_partials!(xdual, x, i)
     end
 
     # handle the last chunk
@@ -159,7 +168,7 @@ function evaluate_f_and_jacobian_chunks!(f!::F, (y,Δx,x), start, stop, ::Forwar
         ForwardDiff.seed!(xdual, x, lastchunkindex, seeds, lastchunksize)
 
         # compute ydual
-        f!(ForwardDiff.seed!(ydual, y), xdual)
+        f!(seed_zero_partials!(ydual, y), xdual)
 
         # extract part of the Jacobian
         ForwardDiff.extract_jacobian_chunk!(TagType, Δx_reshaped, ydual, lastchunkindex, lastchunksize)

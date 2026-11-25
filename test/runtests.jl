@@ -46,3 +46,35 @@ ForwardDiff.gradient!(dXref, f, X, ForwardDiff.GradientConfig(f, X, ForwardDiff.
 PolyesterForwardDiff.threaded_gradient!(f, dX, X, ForwardDiff.Chunk(8));
 
 @test dX ≈ dXref
+
+@testset "closures capturing data" begin
+    make_loss(obs) = p -> sum(abs2, p .- obs) + sum(sum ∘ sincos, p)
+    xc = randn(803)
+    fc = make_loss(randn(803))
+    @test !Base.issingletontype(typeof(fc))
+    dxc = similar(xc)
+    ref = ForwardDiff.gradient(fc, xc)
+    for check in (Val{false}(), Val{true}())
+        for _ in 1:50
+            dxc .= NaN
+            val = PolyesterForwardDiff.threaded_gradient!(fc, dxc, xc, ForwardDiff.Chunk(8), check)
+            @test dxc ≈ ref
+            @test val ≈ fc(xc)
+        end
+    end
+
+    B = randn(100, 803)
+    hc = let B = B; x -> B * x; end
+    hc! = let B = B; (y, x) -> (y .= B * x); end
+    Jref = ForwardDiff.jacobian(hc, xc)
+    J = similar(Jref); yc = similar(xc, 100)
+    for check in (Val{false}(), Val{true}())
+        J .= NaN
+        PolyesterForwardDiff.threaded_jacobian!(hc, J, xc, ForwardDiff.Chunk(8), check)
+        @test J ≈ Jref
+        J .= NaN; yc .= NaN
+        PolyesterForwardDiff.threaded_jacobian!(hc!, yc, J, xc, ForwardDiff.Chunk(8), check)
+        @test J ≈ Jref
+        @test yc ≈ B * xc
+    end
+end
